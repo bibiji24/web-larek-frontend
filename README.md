@@ -142,10 +142,13 @@ type ValidationErrors = Partial<Record<keyof IConsumerInfo, string>>;
 - events: EventEmitter - экземпляр класса `EventEmitter` для инициации событий при изменении данных.
 - basket: Map<string, number> - массив уникальных `id` товаров, добавленных в корзину.
 - basketPrice: number - общая стоимость всех товаров, добавленных в корзину.
+- itemsNumber: number | null - количество товаров в корзине.
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными.
-- addToBasket(id: string): void - добавляет выбранный в товар в `basket`.
+- addToBasket(Pick<>): void - добавляет выбранный в товар в `basket`.
 - removeFromBasket(id: string): void - удаляет выбранный товар из массива `basket`.
+- clearBasket(): void - метод очищения корзины.
+- isInBasket(id: string): boolean - проверка есть ли товар в корзине.
 - геттеры для получения данных из полей класса.
 
 #### Класс ConsumerModel
@@ -242,7 +245,7 @@ type ValidationErrors = Partial<Record<keyof IConsumerInfo, string>>;
 #### *События изменения данных (генерируются классами моделями данных)*
 - `model:products:change` - изменение массива товаров.
 - `model:basket:change` - изменение массива товаров в корзине.
-- `model:products:prevewChange` - изменение открываемой в модальном окне товара.
+- `model:products:previewChange` - изменение открываемой в модальном окне товара.
 - `model:consumer:errorsChange` - изменение валидности данных о пользователе в модели.
 
 #### *События, генерируемые при действиях пользователя (генерируются классами отображения)*

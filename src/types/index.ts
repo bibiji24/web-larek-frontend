@@ -14,7 +14,7 @@ export interface IProduct {
   image: string;
   title: string;
   category: ProductCategory;
-  price: number;
+  price: number | null;
 }
 
 export enum PaymentMethod {
@@ -44,9 +44,12 @@ export interface ProductModel {
 export interface BasketModel {
   events: EventEmitter;
   basket: Map<string, number>;
-  basketPrice: number;
-  addToBasket(id: string): void;
+  basketPrice: number | null;
+  itemsNumber: number[];
+  addToBasket(data: Pick<IProduct, 'id' | 'price'>): void;
   removeFromBasket(id: string): void;
+  clearBasket(): void
+  isInBasket(id: string): boolean;
 }
 
 export interface ConsumerModel {
