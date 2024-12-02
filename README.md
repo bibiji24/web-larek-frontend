@@ -164,7 +164,7 @@ type ValidationErrors = Partial<Record<keyof IConsumerInfo, string>>;
 - addConsumerContacts(data: TConsumerContacts): void - добавляет данные в поля `email` и `phone` свойства `consumerInfo`.
 - clearData(): void - метод для очистки данных о пользователе и методе оплаты.
 - геттер для получения данных из полей класса.
-- validate() - метод проверяет данные при каждом их изменении и меняет свойство `errors`. При изменении свойства `errors` генерируется событие model:consumer:errorsChange
+- validate() - метод проверяет данные при каждом их изменении и меняет свойство `errors`. При изменении свойства `errors` генерируется событие `model:consumer:errorsChange`.
 
 ### Слой отображения
 #### Класс BasketIconUI

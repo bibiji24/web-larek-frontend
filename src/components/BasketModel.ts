@@ -1,7 +1,7 @@
-import { IProduct } from "../types";
+import { IBasketModel, IProduct } from "../types";
 import { EventEmitter } from "./base/events";
 
-export class BasketModel implements BasketModel{
+export class BasketModel implements IBasketModel{
   protected _basket: Map<string, number> | null;
   protected _basketPrice: number;
   protected _itemsNumber: number| null; 

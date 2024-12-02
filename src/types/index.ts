@@ -23,7 +23,7 @@ export enum PaymentMethod {
 }
 
 export interface IConsumerInfo {
-  payment: PaymentMethod;
+  payment: PaymentMethod | '';
   address: string;
   email: string;
   phone: string;
@@ -34,29 +34,28 @@ export type TConsumerContacts = Pick<IConsumerInfo, 'email' | 'phone'>;
 
 export type ValidationErrors = Partial<Record<keyof IConsumerInfo, string>>;
 
-export interface ProductModel {
-  events: EventEmitter;
+export interface IProductModel {
   productList: IProduct[];
   preview: string | null;
   getProduct(id: string): IProduct;
 }
 
-export interface BasketModel {
-  events: EventEmitter;
+export interface IBasketModel {
   basket: Map<string, number>;
   basketPrice: number | null;
-  itemsNumber: number[];
+  itemsNumber: number;
   addToBasket(data: Pick<IProduct, 'id' | 'price'>): void;
   removeFromBasket(id: string): void;
   clearBasket(): void
   isInBasket(id: string): boolean;
 }
 
-export interface ConsumerModel {
-  events: EventEmitter;
-  consumerInfo: IConsumerInfo;
+export interface IConsumerModel {
+  consumerInfo: Partial<IConsumerInfo>;
   errors: ValidationErrors;
   addConsumerAddress(data: TConsumerAddressAndPayment): void;
   addConsumerContacts(data: TConsumerContacts): void;
+  addressIsValid(): boolean;
+  contactIsValid(): boolean;
   clearData(): void
 }

@@ -1,7 +1,7 @@
-import { IProduct } from "../types";
+import { IProduct, IProductModel } from "../types";
 import { EventEmitter } from "./base/events";
 
-export class ProductsModel {
+export class ProductsModel implements IProductModel {
   protected _productList: IProduct[];
   protected _preview: string | null;
 
