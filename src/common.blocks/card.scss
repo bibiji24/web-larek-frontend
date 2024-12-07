@@ -44,7 +44,14 @@
     height: 390px;
     aspect-ratio: 1;
     margin: 3.75rem;
+    
+    & svg{
+      background: rgba(12, 24, 40, 0.31);
+      box-shadow: inset 0px 0.898439px 1.41183px #FFFFFF, inset 0px -10.5246px 8.7277px #E8E8E8, inset 0px 12.5782px 12.8348px rgba(232, 232, 232, 0.3), inset 0px 0.513394px 2.31027px rgba(232, 232, 232, 0.5), inset 0px 0.128348px 5.13394px rgba(232, 232, 232, 0.2);
+      backdrop-filter: blur(5.20258px);
+    }
   }
+
   &__title {
     font-size: $titleFontSize;
     font-weight: 500;

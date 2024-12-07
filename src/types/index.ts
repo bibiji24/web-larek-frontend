@@ -1,5 +1,3 @@
-import { EventEmitter } from "../components/base/events";
-
 export enum ProductCategory {
   soft = 'софт-скил',
   hard = 'хард-скил',
@@ -18,8 +16,8 @@ export interface IProduct {
 }
 
 export enum PaymentMethod {
-  online = 'Онлайн',
-  offline = 'При получении'
+  online = 'online',
+  offline = 'offline'
 }
 
 export interface IConsumerInfo {
@@ -36,7 +34,6 @@ export type ValidationErrors = Partial<Record<keyof IConsumerInfo, string>>;
 
 export interface IProductModel {
   productList: IProduct[];
-  preview: string | null;
   getProduct(id: string): IProduct;
 }
 
@@ -58,4 +55,14 @@ export interface IConsumerModel {
   addressIsValid(): boolean;
   contactIsValid(): boolean;
   clearData(): void
+}
+
+export interface IOrder extends Partial<IConsumerInfo> {
+  total: number;
+  items: string[];
+}
+
+export interface ISuccessOrderAnswer {
+  total: number;
+  id: string;
 }

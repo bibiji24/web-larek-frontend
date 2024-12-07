@@ -20,58 +20,37 @@ export class ConsumerModel implements IConsumerModel {
 
   addConsumerAddress(data: TConsumerAddressAndPayment){
     this._consumerInfo = {...data};
-    this.validateAddress();
+    this.validate();
   }
 
   addConsumerContacts(data: TConsumerContacts){
     this._consumerInfo = {...this._consumerInfo, ...data};
-    this.validateContacts();
+    this.validate();
   }
 
-  protected validateAddress(){
+  protected validate(){
     const errors: typeof this.errors = {};
-    if (this.consumerInfo.payment === ''){
+    if (!this.consumerInfo.payment){
       errors.payment = 'Необходимо указать способ оплаты.';
     }
-    if (this.consumerInfo.address === ''){
+    if (!this.consumerInfo.address){
       errors.address = 'Необходимо указать адрес доставки.'
     }
-    this._errors = {...this._errors, ...errors};
-    this.events.emit('model:consumer:errorsChange');
-    console.log('validate address');
-    
-  }
-
-  protected validateContacts(){
-    const errors: typeof this.errors = {};
-    if (this.consumerInfo.email === ''){
-      console.log('wrong email');
-      
-      errors.payment = 'Необходимо указать электронную почту.';
+    if (!this.consumerInfo.email){
+      errors.email = 'Необходимо указать электронную почту.';
     }
-    if (this.consumerInfo.phone === ''){
+    if (!this.consumerInfo.phone){
       errors.phone = 'Необходимо указать контактный номер телефона.'
     }
-    this._errors = {...this._errors, ...errors};
-    this.events.emit('model:consumer:errorsChange');
-    console.log('validate contacts');
-
+    this._errors = errors;    
   }
 
   addressIsValid(){
-    if (this.errors.address && this.errors.payment) {
-      return true;
-    } else {
-      return false;
-    }
+    return !(Boolean(this.errors.address) || Boolean(this.errors.payment))
   };
 
   contactIsValid(){
-    if (this.errors.email && this.errors.phone) {
-      return true;
-    } else {
-      return false;
-    }
+    return !(Boolean(this.errors.email) || Boolean(this.errors.phone))
   }
 
   clearData() {

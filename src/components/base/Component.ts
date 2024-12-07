@@ -1,9 +1,11 @@
-export abstract class Component<T> {
-  protected constructor(protected readonly container: HTMLElement) {
+import { EventEmitter } from "./events";
+
+export abstract class Component {
+  protected constructor(protected readonly container: HTMLElement, protected events: EventEmitter) {
   }
   // возвращает DOM-элемент
-  render(data?: Partial<T>): HTMLElement {
-    Object.assign(this as object, data ?? {});
+  render(): HTMLElement {
+    
     return this.container;
-  }
+}
 }

@@ -3,10 +3,8 @@ import { EventEmitter } from "./base/events";
 
 export class ProductsModel implements IProductModel {
   protected _productList: IProduct[];
-  protected _preview: string | null;
 
   constructor(protected events: EventEmitter){
-    this.preview = null;
   }
 
   set productList(data: IProduct[]) {
@@ -16,15 +14,6 @@ export class ProductsModel implements IProductModel {
 
   get productList() {
     return this._productList;
-  }
-
-  set preview(id: string) {
-    this._preview = id;
-    this.events.emit('model:products:previewChange');
-  }
-
-  get preview() {
-    return this._preview;
   }
 
   getProduct(id: string): IProduct {

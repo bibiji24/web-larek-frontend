@@ -48,10 +48,7 @@ export class BasketModel implements IBasketModel{
       this.basket.set(id, price);
       this.itemsNumber = this.basket.size;
       this.events.emit(`model:basket:change`);
-    } else {
-      throw new Error(`Couldn't add item ${id} into BasketModel`);
     }
-    
   }
 
   removeFromBasket(id: string) {
