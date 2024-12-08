@@ -63,7 +63,7 @@ export class OrderFormUI extends FormUI {
   }
 
   reset(): void {
-    this.container.reset()
+    super.reset()
     if (this.buttonCard.classList.contains('button_alt-active')) {
       this.buttonCard.classList.remove('button_alt-active');
     }

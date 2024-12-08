@@ -18,6 +18,7 @@ export abstract class FormUI extends Component {
 
   reset() {
     this.container.reset()
+    this.submitButton.disabled = true;
   }
 
 }
