@@ -42,6 +42,8 @@ const orderFormElement = cloneTemplate(orderFormTemp) as HTMLFormElement;
 const basketElement = cloneTemplate(basketTemp) as HTMLElement;
 const contactsElement = cloneTemplate(contactsFormTemp) as HTMLFormElement;
 const successElement = cloneTemplate(successTemp) as HTMLElement;
+const cardPreviewElem = cloneTemplate(cardPreviewTemp) as HTMLElement;
+
 
 // базовые классы
 const api = new Api(API_URL);
@@ -59,15 +61,19 @@ const orderForm = new OrderFormUI(orderFormElement, events);
 const contactsForm = new ContactsFormUI(contactsElement, events);
 const basket = new BasketUI(basketElement, events);
 const success = new SuccessUI(successElement, events);
+const previewCard = new CardUI(cardPreviewElem, events);
 
 modal.setOnClose(onModalClose);
 
 // Получаем товары с сервера и помещаем их в модель данных
 api.get('/product').then((data: {items: IProduct[]}) => {
   productsModel.productList = data.items
-});
+}).catch(err => {
+  console.error(err);
+});;
 
 // Далее привязка слушателей к событиям
+
 events.on(`model:products:change`, () => {
   const elems = productsModel.productList.map(item => {
     const cardElem = new CardUI(cloneTemplate<HTMLButtonElement>(cardTemp), events);
@@ -80,31 +86,13 @@ events.on(`model:products:change`, () => {
 });
 
 events.on(`model:basket:change`, () => {
+  // меняем счетчик на иконке корзины
   basketIcon.setCounterValue(basketModel.itemsNumber);
-});
 
-events.on(`ui:card:pick`, ({ id }: {id: string}) => {
-  const cardElement = new CardUI(cloneTemplate<HTMLButtonElement>(cardPreviewTemp), events);
-  const cardData = productsModel.getProduct(id);
-  cardElement.setForPreview(cardData);
-  cardElement.changeButtonState(basketModel.isInBasket(id));
-  onModalOpen();
-  modal.open();
-  modal.setContent(cardElement.render());
-});
-
-events.on(`ui:card:buy`, ({ id }: {id: string}) => {
-  basketModel.addToBasket(productsModel.getProduct(id));
-  events.emit(`ui:card:pick`, {id: id})
-});
-
-events.on(`ui:card:removeFromBusket`, ({ id }: {id: string}) => {
-  basketModel.removeFromBasket(id);
-  events.emit(`ui:card:pick`, {id: id})
-});
-
-events.on(`ui:basketIcon:click`, () => {
+  // меняем состояние кнопки карточки превью
+  previewCard.changeButtonState(basketModel.isInBasket(previewCard.id));
   
+  // менем содержимое корзины
   const basketItems: HTMLElement[] = [];
   let index: number = 1;
   for (let item of basketModel.basket.keys()) {
@@ -116,21 +104,39 @@ events.on(`ui:basketIcon:click`, () => {
     index += 1;
   }
   basket.setBasketItems(basketItems);
-  basket.setTotalPrice(basketModel.basketPrice);  
-  basket.disableOrderButton(Boolean(basketModel.basketPrice));
+  basket.setTotalPrice(basketModel.basketPrice);
+
+  if (basketModel.basketPrice === 0) {
+    basket.disableOrderButton(false);
+  } else {
+    basket.disableOrderButton(true);
+  }
+});
+
+events.on(`ui:card:pick`, ({ id }: {id: string}) => {
+  const cardData = productsModel.getProduct(id);
+  previewCard.setForPreview(cardData);
+  previewCard.changeButtonState(basketModel.isInBasket(id));
+  onModalOpen();
+  modal.open();
+  modal.setContent(previewCard.render());
+});
+
+events.on(`ui:card:buy`, ({ id }: {id: string}) => {
+  basketModel.addToBasket(productsModel.getProduct(id));
+});
+
+events.on(`ui:basketIcon:click`, () => {
   modal.open();
   onModalOpen();
   modal.setContent(basket.render());
 })
 
-events.on('ui:basket:removeFromBusket', ({ id }: {id: string}) => {
+events.on('ui:basket:removeFromBasket', ({ id }: {id: string}) => {
   basketModel.removeFromBasket(id);
-  events.emit(`ui:basketIcon:click`);
 })
 
 events.on(`ui:basket:order`, () => {
-  modal.open();
-  onModalOpen();
   modal.setContent(orderForm.render());
 });
 
@@ -163,7 +169,9 @@ events.on(`ui:contactsForm:submit`, () => {
     contactsForm.reset();
     basketModel.clearBasket();
     modal.setContent(success.render());
-  })
+  }).catch(err => {
+    console.error(err);
+  });
 });
 
 events.on(`ui:success:close`, () => {

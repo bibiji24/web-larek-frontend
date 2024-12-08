@@ -1,7 +1,6 @@
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
 import { EventEmitter } from "./base/events";
-import { BasketModel } from "./BasketModel";
 
 export class BasketUI extends Component {
   protected basketbutton: HTMLButtonElement;
@@ -11,6 +10,7 @@ export class BasketUI extends Component {
   constructor(container: HTMLElement, events: EventEmitter){
     super(container, events);
     this.basketbutton = ensureElement<HTMLButtonElement>('.basket__button', container);
+    this.basketbutton.disabled = true;
     this.basketbutton.addEventListener('click', (evt) => {
       evt.preventDefault();
       events.emit(`ui:basket:order`);

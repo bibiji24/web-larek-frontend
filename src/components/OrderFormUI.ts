@@ -62,4 +62,14 @@ export class OrderFormUI extends FormUI {
     }
   }
 
+  reset(): void {
+    this.container.reset()
+    if (this.buttonCard.classList.contains('button_alt-active')) {
+      this.buttonCard.classList.remove('button_alt-active');
+    }
+    if (this.buttonCash.classList.contains('button_alt-active')) {
+      this.buttonCash.classList.remove('button_alt-active');
+    }
+  }
+
 }

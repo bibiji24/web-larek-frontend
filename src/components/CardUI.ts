@@ -5,7 +5,7 @@ import { Component } from "./base/Component";
 import { EventEmitter } from "./base/events";
 
 export class CardUI extends Component {
-  protected id: string;
+  protected _id: string;
   protected description:  HTMLParagraphElement | null;
   protected image: HTMLImageElement | null;
   protected title: HTMLHeadingElement;
@@ -25,11 +25,15 @@ export class CardUI extends Component {
     this.indexInBasket = null;
   }
 
+  get id() {
+    return this._id;
+  }
+
   setForBasket(cardData: IProduct){
     this.indexInBasket = ensureElement<HTMLSpanElement>('.basket__item-index', this.container);
     this.cardButton = ensureElement<HTMLButtonElement>('.card__button', this.container);
     this.cardButton.addEventListener('click', () => {
-      this.events.emit('ui:basket:removeFromBusket', {id: this.id});
+      this.events.emit('ui:basket:removeFromBasket', {id: this.id});
     });
     this.setMinimal(cardData);
   }
@@ -42,16 +46,9 @@ export class CardUI extends Component {
     this.cardButton = ensureElement<HTMLButtonElement>('.card__button', this.container);
     // проверка цены товара. Если товар бесценный, то его невозможно купить
     if (!cardData.price) {
-      this.cardButton.textContent = 'Товар не продается'
-      console.log(this.cardButton.textContent);
-      
+      this.cardButton.textContent = 'Товар не продается'      
       this.cardButton.disabled = true;
     }
-
-    // стандартный обработчик покупки
-    this.cardButton.addEventListener('click', () => {
-      this.events.emit('ui:card:buy', {id: this.id});
-    });
 
     this.setImage(cardData.image, cardData.title);
 
@@ -89,18 +86,40 @@ export class CardUI extends Component {
   }
 
   protected setMinimal(cardData: IProduct){
-    this.id = cardData.id;
+    this._id = cardData.id;
     this.title.textContent = cardData.title;
     const itemPrice = cardData.price === null? 0: cardData.price;
     this.price.textContent = itemPrice + ' синапсов';
   }
+
+  protected emitAddEvent = () => {
+    this.events.emit('ui:card:buy', {id: this.id});
+  }
+
+  protected emitRemoveEvent = () => {
+    this.events.emit('ui:basket:removeFromBasket', {id: this.id});
+  }
+    
   // меняет поведение кнопки если товар есть в корзине и меняет надпись на ней.
   changeButtonState(inBasket: boolean){
-    if (inBasket) {
-      this.cardButton.textContent = 'Убрать из корзины'
-      this.cardButton.addEventListener('click', () => {
-        this.events.emit('ui:card:removeFromBusket', {id: this.id});
-      });
+    if (this.price.textContent === '0 синапсов') {
+      this.cardButton.textContent = 'Товар не продается'      
+      this.cardButton.disabled = true;
+      return;
     }
+
+    if (inBasket) {
+      this.cardButton.removeEventListener('click', this.emitAddEvent)
+      this.cardButton.textContent = 'Убрать из корзины'
+      this.cardButton.disabled = false;
+      this.cardButton.addEventListener('click', this.emitRemoveEvent);
+    } else {
+      // стандартный обработчик покупки
+      this.cardButton.removeEventListener('click', this.emitRemoveEvent)
+      this.cardButton.textContent = 'Добавить в корзину';
+      this.cardButton.disabled = false;
+      this.cardButton.addEventListener('click', this.emitAddEvent)
+    }
+      
   }
 }
